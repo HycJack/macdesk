@@ -81,6 +81,16 @@ func (d *desk) winID(p *phrases, name string) string {
 		return "settings"
 	case p.trashT:
 		return "trash"
+	case p.safari:
+		return "safari"
+	case p.mail:
+		return "mail"
+	case p.photos:
+		return "photos"
+	case p.music:
+		return "music"
+	case p.terminal:
+		return "terminal"
 	}
 	for id, ia := range d.installed {
 		if ia.manifest.Name == name {

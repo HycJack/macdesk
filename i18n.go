@@ -45,6 +45,9 @@ type phrases struct {
 	today, weatherCity, weatherState                               string
 	dockOpenL, dockCloseL, dockQuitL                               string
 	ctxNewFolder, ctxWall, ctxSpot, ctxLpad, ctxTrash, ctxAbout    string
+	favT, safariStart, safariPH                                    string
+	mailBoxes, mailInbox, mailSent, mailDrafts                     string
+	musicNow, playL                                                string
 }
 
 var zh = phrases{
@@ -114,6 +117,9 @@ var zh = phrases{
 	dockOpenL: "打开", dockCloseL: "关闭窗口", dockQuitL: "退出",
 	ctxNewFolder: "新建文件夹", ctxWall: "更换壁纸", ctxSpot: "聚焦搜索",
 	ctxLpad: "启动台", ctxTrash: "清空废纸篓", ctxAbout: "关于本机",
+	favT: "个人收藏", safariStart: "起始页", safariPH: "搜索或输入网站名称",
+	mailBoxes: "邮箱", mailInbox: "收件箱", mailSent: "已发送", mailDrafts: "草稿",
+	musicNow: "正在播放", playL: "播放",
 }
 
 var en = phrases{
@@ -183,6 +189,9 @@ var en = phrases{
 	dockOpenL: "Open", dockCloseL: "Close Window", dockQuitL: "Quit",
 	ctxNewFolder: "New Folder", ctxWall: "Change Wallpaper", ctxSpot: "Spotlight",
 	ctxLpad: "Launchpad", ctxTrash: "Empty Trash", ctxAbout: "About This Mac",
+	favT: "Favourites", safariStart: "Start Page", safariPH: "Search or enter website name",
+	mailBoxes: "Mailboxes", mailInbox: "Inbox", mailSent: "Sent", mailDrafts: "Drafts",
+	musicNow: "Now Playing", playL: "Play",
 }
 
 // tr is the copy of the current language.

@@ -223,6 +223,25 @@ func TestDockMenuOpensAndCloses(t *testing.T) {
 	}
 }
 
+// TestDockOpensEveryBuiltInWindow walks the decorative apps.
+func TestDockOpensEveryBuiltInWindow(t *testing.T) {
+	d, tt := newTest(t)
+	p := d.tr()
+	for _, c := range []struct{ name, marker string }{
+		{p.safari, p.favT},
+		{p.mail, p.mailSent},
+		{p.photos, "12"},
+		{p.music, p.musicNow},
+		{p.terminal, "macdesk 1.0.0 · go 1.27"},
+	} {
+		d.openApp(p, c.name)
+		settle(tt)
+		if !tt.HasText(c.marker) {
+			t.Errorf("%s window misses %q; texts %v", c.name, c.marker, tt.Texts())
+		}
+	}
+}
+
 // TestSystemShortcuts binds Spotlight and Launchpad to keys.
 func TestSystemShortcuts(t *testing.T) {
 	d, tt := newTest(t)

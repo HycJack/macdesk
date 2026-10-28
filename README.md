@@ -50,6 +50,11 @@ An installed app runs in its own window and lives in the dock:
 
 ![Settings](docs/settings.png)
 
+**Safari, Mail, Photos, Music and Terminal** open from the dock with the same chrome — a start page of favourites, a
+mailbox list, a photo grid, a player and a shell transcript:
+
+![built-in app windows](docs/apps.png)
+
 Right-clicking the desktop opens New Folder / Wallpaper / Launchpad / Spotlight / Empty Trash / About; right-clicking a
 dock icon opens Open / Close Window / Quit. The trash keeps what you uninstall, and the dock shows it full.
 
@@ -151,7 +156,7 @@ manifest + main.go  ──yaegi──▶  hooks  ──View()──▶  Node tre
 - `installer.go` validates manifests and installs, imports (folder or zip) and prunes old versions.
 - `appstore.go` is the store UI; `theme.go` holds the palettes, the wallpapers and the desktop metrics.
 - `launchpad.go`, `spotlight.go`, `notifications.go`, `settings.go`, `trash.go` and `deskmenu.go` are the desktop
-  overlays; `desk.go` owns the state they read and the windows they open.
+  overlays; `appwindows.go` holds the built-in windows; `desk.go` owns the state they read and `menubar.go` the menu bar.
 - `appicons/` embeds the set: `svg/` is generated from macos-web's sheet by `tools/extract_icons.go`, `custom/` holds the
   hand-drawn and text-free redraws that win on a shared name.
 - Widgets (`desktop/`, `display/`, `layout/`, `typography/`, `icon/`, `sound/`, `kit/`) come from

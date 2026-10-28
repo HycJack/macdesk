@@ -68,6 +68,24 @@ func TestShootOverlays(t *testing.T) {
 	shoot(t, tt, "settings")
 }
 
+// TestShootApps renders the Photos and Terminal windows for the README.
+func TestShootApps(t *testing.T) {
+	if os.Getenv("MACDESK_SHOTS") == "" {
+		t.Skip("set MACDESK_SHOTS=1 to refresh docs screenshots")
+	}
+	isolateApps(t)
+	d := newDesk()
+	d.wins["notes"].open = false
+	tt := ui.NewTester(d.view, 1280, 820)
+	settle(tt)
+	d.openID("photos")
+	d.openID("terminal")
+	d.wins["photos"].x, d.wins["photos"].y = 60, 70
+	d.wins["terminal"].x, d.wins["terminal"].y = 600, 300
+	settle(tt)
+	shoot(t, tt, "apps")
+}
+
 // TestShootLight renders the light appearance for the README.
 func TestShootLight(t *testing.T) {
 	if os.Getenv("MACDESK_SHOTS") == "" {

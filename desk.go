@@ -66,6 +66,8 @@ type desk struct {
 	dockRight string
 	wall      int
 	accent    int
+	safariIn  string
+	mailBox   string
 }
 
 func newDesk() *desk {
@@ -78,9 +80,15 @@ func newDesk() *desk {
 	d.wins["store"] = &winState{x: 430, y: 110}
 	d.wins["settings"] = &winState{x: 320, y: 130}
 	d.wins["trash"] = &winState{x: 430, y: 190}
+	d.wins["safari"] = &winState{x: 240, y: 96}
+	d.wins["mail"] = &winState{x: 260, y: 120}
+	d.wins["photos"] = &winState{x: 300, y: 130}
+	d.wins["music"] = &winState{x: 430, y: 150}
+	d.wins["terminal"] = &winState{x: 320, y: 170}
 	d.finderIn = zh.finderGroups[0].Items[0].Name
 	d.noteIn = zh.noteGroups[0].Items[0].Name
 	d.noteText = zh.noteBodies[0]
+	d.mailBox = zh.mailInbox
 	d.scanInstalled()
 	return d
 }
@@ -104,6 +112,11 @@ func (d *desk) view(c *ui.Context) {
 			d.window(c, p, "about", p.appleAbout, aboutW, aboutH, d.aboutBody)
 			d.window(c, p, "settings", p.settings, 600, 470, d.settingsBody)
 			d.window(c, p, "trash", p.trashT, 440, 380, d.trashBody)
+			d.window(c, p, "safari", p.safari, 900, 560, d.safariBody)
+			d.window(c, p, "mail", p.mail, 820, 520, d.mailBody)
+			d.window(c, p, "photos", p.photos, 760, 520, d.photosBody)
+			d.window(c, p, "music", p.music, 420, 480, d.musicBody)
+			d.window(c, p, "terminal", p.terminal, 640, 400, d.terminalBody)
 			for _, id := range slices.Sorted(maps.Keys(d.installed)) {
 				wid := "app:" + id
 				if ws := d.wins[wid]; ws == nil || !ws.open {
@@ -275,12 +288,12 @@ func (d *desk) dockBar(c *ui.Context, p *phrases) {
 		apps := []desktop.DockApp{
 			{Name: p.finder, Art: "app-finder", Running: d.wins["finder"].open},
 			{Name: p.launchpadT, Art: "app-launchpad", Running: d.lpad},
-			{Name: p.safari, Art: "app-safari"},
-			{Name: p.mail, Art: "app-mail", Badge: 3},
+			{Name: p.safari, Art: "app-safari", Running: d.wins["safari"].open},
+			{Name: p.mail, Art: "app-mail", Badge: 3, Running: d.wins["mail"].open},
 			{Name: p.notes, Art: "app-notes", Running: d.wins["notes"].open},
-			{Name: p.photos, Art: "app-photos"},
-			{Name: p.music, Art: "app-music"},
-			{Name: p.terminal, Art: "app-terminal"},
+			{Name: p.photos, Art: "app-photos", Running: d.wins["photos"].open},
+			{Name: p.music, Art: "app-music", Running: d.wins["music"].open},
+			{Name: p.terminal, Art: "app-terminal", Running: d.wins["terminal"].open},
 			{Name: p.settings, Art: "app-settings", Running: d.wins["settings"].open},
 			{Name: p.storeT, Art: "app-appstore", Running: d.wins["store"].open},
 		}
@@ -317,6 +330,16 @@ func (d *desk) openApp(p *phrases, name string) {
 		id = "settings"
 	case p.trashT:
 		id = "trash"
+	case p.safari:
+		id = "safari"
+	case p.mail:
+		id = "mail"
+	case p.photos:
+		id = "photos"
+	case p.music:
+		id = "music"
+	case p.terminal:
+		id = "terminal"
 	case p.launchpadT:
 		d.lpad = !d.lpad
 		return
