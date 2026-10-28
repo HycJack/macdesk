@@ -1,4 +1,4 @@
-﻿package desktop
+package desktop
 
 import (
 	"bytes"

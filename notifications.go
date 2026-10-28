@@ -1,4 +1,4 @@
-﻿package main
+package main
 
 import (
 	"time"
@@ -34,7 +34,7 @@ func (d *desk) notifTray(c *ui.Context, p *phrases) {
 			sound.Play(sound.Tap)
 		}
 		panel := ui.Column(c).Absolute().Right(t.Space(2)).Top(menuH + t.Space(2)).
-			Width(t.Space(82)).MaxHeight(winH-menuH-dockH-t.Space(6)).Gap(t.Space(2.5))
+			Width(t.Space(82)).MaxHeight(winH - menuH - dockH - t.Space(6)).Gap(t.Space(2.5))
 		kit.Arrive(panel, ui.Pose{X: t.Space(6), Fade: 1}, 0)
 		panel.Children(func() {
 			d.clockCard(c, p)

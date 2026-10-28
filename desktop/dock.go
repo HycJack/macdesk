@@ -41,7 +41,7 @@ func Dock(c *ui.Context, apps []DockApp, opened, right *string) ui.Element {
 	}
 	t := c.Theme()
 	root := ui.Row(c).Gap(t.Space(1.5)).AlignItems(ui.End).Padding(t.Space(1.75)).
-		Radius(dockSize * 0.4).Background(kit.Glass(t, 0.42)).Border(1, kit.Glass(t, 0.5)).
+		Radius(dockSize*0.4).Background(kit.Glass(t, 0.42)).Border(1, kit.Glass(t, 0.5)).
 		Shadow(0, 18, 40, -8, kit.Shade(0.42)).Role(ui.RoleToolbar)
 	kit.Arrive(root, ui.Pose{Y: t.Space(3), Fade: 1}, 0)
 	hover := ui.Local(root, "hover", func() int { return -1 })

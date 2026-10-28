@@ -36,7 +36,7 @@ func (d *desk) setAppearance(c *ui.Context, p *phrases) {
 	t := c.Theme()
 	card(c, p.setAppearance, func() {
 		ui.Row(c).FillWidth().Gap(t.Space(1)).Padding(t.Space(0.75)).
-			Radius(t.Radius*1.5).Background(t.Background).Children(func() {
+			Radius(t.Radius * 1.5).Background(t.Background).Children(func() {
 			for i, label := range [2]string{p.setLight, p.setDark} {
 				on := (i == 1) == d.controls.Dark
 				b := kit.Press(ui.ButtonBase(c).Label(label).Grow(1).Center().
