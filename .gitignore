@@ -1,0 +1,13 @@
+# build output
+*.exe
+*.dll
+*.so
+*.dylib
+
+# runtime data: installed apps and their storage
+/apps/
+
+# editors
+.idea/
+.vscode/
+*.swp
