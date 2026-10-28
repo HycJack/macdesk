@@ -33,6 +33,18 @@ type phrases struct {
 	importPH, permsT, storeEmpty, storeErrT                        string
 	storeTag, storeEntryT, storeAPIT, storeLimitT                  string
 	moreT                                                          string
+	launchpadT, trashT, spotT, spotPH, notifT                      string
+	spotApps, spotActions, spotFiles, spotEmpty                    string
+	actDark, actWall, actLpad, actNotif, actTrash, actAbout        string
+	wallNames, accentNames                                         []string
+	setAppearance, setLight, setDark, setWallpaper, setAccent      string
+	setAbout, setVersion                                           string
+	trashEmptyT, trashEmptyHint, trashClear, trashHint             string
+	notifClear, notifNone, notifInstall, notifRemove               string
+	calWeek                                                        [7]string
+	today, weatherCity, weatherState                               string
+	dockOpenL, dockCloseL, dockQuitL                               string
+	ctxNewFolder, ctxWall, ctxSpot, ctxLpad, ctxTrash, ctxAbout    string
 }
 
 var zh = phrases{
@@ -84,6 +96,24 @@ var zh = phrases{
 	storeTag: "用 Go 写的小软件，装完即用：界面由系统绘制，脚本在沙箱里运行。",
 	storeEntryT: "入口", storeAPIT: "接口", storeLimitT: "上限",
 	moreT: "这里还有",
+	launchpadT: "启动台", trashT: "废纸篓", spotT: "聚焦搜索", spotPH: "搜索应用、文件与操作",
+	notifT: "通知中心",
+	spotApps: "应用程序", spotActions: "操作", spotFiles: "文件", spotEmpty: "没有匹配的结果",
+	actDark: "切换深色模式", actWall: "更换壁纸", actLpad: "打开启动台",
+	actNotif: "通知中心", actTrash: "清空废纸篓", actAbout: "关于本机",
+	wallNames:   []string{"紫霞", "石墨", "海洋", "森林", "日落"},
+	accentNames: []string{"蓝色", "紫色", "粉色", "红色", "橙色", "绿色", "石墨"},
+	setAppearance: "外观", setLight: "浅色", setDark: "深色", setWallpaper: "壁纸",
+	setAccent: "强调色", setAbout: "关于", setVersion: "版本",
+	trashEmptyT: "废纸篓是空的", trashEmptyHint: "卸载的应用会先放到这里",
+	trashClear: "清空", trashHint: "已卸载的应用",
+	notifClear: "全部清除", notifNone: "没有新通知",
+	notifInstall: "已安装", notifRemove: "已卸载",
+	calWeek:  [7]string{"一", "二", "三", "四", "五", "六", "日"},
+	today:    "今天", weatherCity: "上海", weatherState: "多云 24°",
+	dockOpenL: "打开", dockCloseL: "关闭窗口", dockQuitL: "退出",
+	ctxNewFolder: "新建文件夹", ctxWall: "更换壁纸", ctxSpot: "聚焦搜索",
+	ctxLpad: "启动台", ctxTrash: "清空废纸篓", ctxAbout: "关于本机",
 }
 
 var en = phrases{
@@ -135,6 +165,24 @@ var en = phrases{
 	storeTag:    "Small programs written in Go: the system draws the views, the script stays sandboxed.",
 	storeEntryT: "Entry", storeAPIT: "API", storeLimitT: "Limit",
 	moreT: "More in the store",
+	launchpadT: "Launchpad", trashT: "Trash", spotT: "Spotlight", spotPH: "Search apps, files and actions",
+	notifT: "Notification Centre",
+	spotApps: "Applications", spotActions: "Actions", spotFiles: "Documents", spotEmpty: "No matches",
+	actDark: "Toggle Dark Mode", actWall: "Change Wallpaper", actLpad: "Open Launchpad",
+	actNotif: "Notification Centre", actTrash: "Empty Trash", actAbout: "About This Mac",
+	wallNames:   []string{"Aurora", "Graphite", "Ocean", "Forest", "Sunset"},
+	accentNames: []string{"Blue", "Purple", "Pink", "Red", "Orange", "Green", "Graphite"},
+	setAppearance: "Appearance", setLight: "Light", setDark: "Dark", setWallpaper: "Wallpaper",
+	setAccent: "Accent colour", setAbout: "About", setVersion: "Version",
+	trashEmptyT: "Trash is empty", trashEmptyHint: "Uninstalled apps land here first",
+	trashClear: "Empty", trashHint: "Uninstalled apps",
+	notifClear: "Clear All", notifNone: "No new notifications",
+	notifInstall: "Installed", notifRemove: "Uninstalled",
+	calWeek:  [7]string{"M", "T", "W", "T", "F", "S", "S"},
+	today:    "Today", weatherCity: "Shanghai", weatherState: "Cloudy 24°",
+	dockOpenL: "Open", dockCloseL: "Close Window", dockQuitL: "Quit",
+	ctxNewFolder: "New Folder", ctxWall: "Change Wallpaper", ctxSpot: "Spotlight",
+	ctxLpad: "Launchpad", ctxTrash: "Empty Trash", ctxAbout: "About This Mac",
 }
 
 // tr is the copy of the current language.

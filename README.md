@@ -32,6 +32,27 @@ An installed app runs in its own window and lives in the dock:
 
 ![countdown app](docs/app.png)
 
+## The rest of the desktop
+
+**Launchpad** (`F4` or the dock grid) blurs the desktop behind every installed app and filters as you type:
+
+![Launchpad](docs/launchpad.png)
+
+**Spotlight** (`⌘Space` or the menu-bar lens) searches apps, actions and files, arrows move, Enter runs:
+
+![Spotlight](docs/spotlight.png)
+
+**Notification Centre** (menu-bar toggle) holds the clock, the week strip, the weather and the app events:
+
+![Notification Centre](docs/notifications.png)
+
+**Settings** pick the appearance, one of five wallpapers and one of seven accent tones, live:
+
+![Settings](docs/settings.png)
+
+Right-clicking the desktop opens New Folder / Wallpaper / Launchpad / Spotlight / Empty Trash / About; right-clicking a
+dock icon opens Open / Close Window / Quit. The trash keeps what you uninstall, and the dock shows it full.
+
 ## Quick start
 
 ```bash
@@ -128,7 +149,9 @@ manifest + main.go  ──yaegi──▶  hooks  ──View()──▶  Node tre
 - `apphost.go` compiles app source in a sandboxed interpreter, validates hooks, and calls them with a timeout.
 - `appkit.go` is the node API and its interpreter symbol table; `viewtree.go` renders nodes with MyGo widgets.
 - `installer.go` validates manifests and installs, imports (folder or zip) and prunes old versions.
-- `appstore.go` is the store UI; `theme.go` holds the palettes and the desktop metrics.
+- `appstore.go` is the store UI; `theme.go` holds the palettes, the wallpapers and the desktop metrics.
+- `launchpad.go`, `spotlight.go`, `notifications.go`, `settings.go`, `trash.go` and `deskmenu.go` are the desktop
+  overlays; `desk.go` owns the state they read and the windows they open.
 - `appicons/` embeds the set: `svg/` is generated from macos-web's sheet by `tools/extract_icons.go`, `custom/` holds the
   hand-drawn and text-free redraws that win on a shared name.
 - Widgets (`desktop/`, `display/`, `layout/`, `typography/`, `icon/`, `sound/`, `kit/`) come from

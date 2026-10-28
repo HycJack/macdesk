@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/HycJack/macdesk/appicons"
 	"github.com/HycJack/macdesk/desktop"
 	"github.com/HycJack/macdesk/icon"
 	"github.com/HycJack/macdesk/kit"
@@ -53,6 +54,21 @@ type desk struct {
 	dockOpen  string
 	focus     string
 	dark      bool
+	lpad      bool
+	spot      bool
+	spotSel   int
+	lpadQ     string
+	spotQ     string
+	notifOpen bool
+	notifs    []notif
+	trash     []trashItem
+	ctxOpen   bool
+	ctxX      float32
+	ctxY      float32
+	ctxApp    string
+	dockRight string
+	wall      int
+	accent    int
 }
 
 func newDesk() *desk {
@@ -63,6 +79,8 @@ func newDesk() *desk {
 	d.wins["notes"] = &winState{open: true, x: 700, y: 336}
 	d.wins["about"] = &winState{}
 	d.wins["store"] = &winState{x: 430, y: 110}
+	d.wins["settings"] = &winState{x: 320, y: 130}
+	d.wins["trash"] = &winState{x: 430, y: 190}
 	d.finderIn = zh.finderGroups[0].Items[0].Name
 	d.noteIn = zh.noteGroups[0].Items[0].Name
 	d.noteText = zh.noteBodies[0]
@@ -74,28 +92,78 @@ func newDesk() *desk {
 func (d *desk) view(c *ui.Context) {
 	d.applyTheme(c)
 	p := d.tr()
-	root := wallpaper(c)
+	d.shortcuts(c)
+	root := ui.Box(c).Fill()
 	root.Children(func() {
-		glow(c)
-		d.menuBar(c, p)
-		d.icons(c, p)
-		d.window(c, p, "finder", p.finderTitle, winFW, winFH, d.finderBody)
-		d.window(c, p, "notes", d.noteIn, 560, 380, d.notesBody)
-		d.window(c, p, "about", p.appleAbout, aboutW, aboutH, d.aboutBody)
-		for _, id := range slices.Sorted(maps.Keys(d.installed)) {
-			wid := "app:" + id
-			if ws := d.wins[wid]; ws == nil || !ws.open {
-				continue
-			}
-			inst := d.ensureApp(id)
-			ia := d.installed[id]
-			d.window(c, p, wid, ia.manifest.Name, 620, 460, func(cc *ui.Context) {
-				d.renderAppView(cc, inst)
-			})
+		wallpaper(c, d.wall)
+		stage := sheet(c)
+		if d.lpad || d.spot {
+			stage.Blur(c.Theme().Space(4))
 		}
-		d.window(c, p, "store", p.storeT, 760, 520, d.storeBody)
-		d.dockBar(c, p)
+		stage.Children(func() {
+			d.icons(c, p)
+			d.window(c, p, "finder", p.finderTitle, winFW, winFH, d.finderBody)
+			d.window(c, p, "notes", d.noteIn, 560, 380, d.notesBody)
+			d.window(c, p, "about", p.appleAbout, aboutW, aboutH, d.aboutBody)
+			d.window(c, p, "settings", p.settings, 600, 470, d.settingsBody)
+			d.window(c, p, "trash", p.trashT, 440, 380, d.trashBody)
+			for _, id := range slices.Sorted(maps.Keys(d.installed)) {
+				wid := "app:" + id
+				if ws := d.wins[wid]; ws == nil || !ws.open {
+					continue
+				}
+				inst := d.ensureApp(id)
+				ia := d.installed[id]
+				d.window(c, p, wid, ia.manifest.Name, 620, 460, func(cc *ui.Context) {
+					d.renderAppView(cc, inst)
+				})
+			}
+			d.window(c, p, "store", p.storeT, 760, 520, d.storeBody)
+			d.dockBar(c, p)
+		})
+		d.menuBar(c, p)
+		if d.notifOpen {
+			d.notifTray(c, p)
+		}
+		if d.lpad {
+			d.launchpad(c, p)
+		}
+		if d.spot {
+			d.spotlight(c, p)
+		}
+		if d.ctxOpen {
+			if d.ctxApp != "" {
+				d.dockMenu(c, p)
+			} else {
+				d.deskMenu(c, p)
+			}
+		}
 	})
+	d.desktopClick(c, root)
+}
+
+// shortcuts binds the system keys of the desktop.
+func (d *desk) shortcuts(c *ui.Context) {
+	c.OnShortcut(ui.Super, ui.KeySpace, func() {
+		d.spot = true
+		d.spotQ = ""
+		d.spotSel = 0
+	})
+	c.OnShortcut(0, ui.KeyF4, func() {
+		d.lpad = !d.lpad
+		d.lpadQ = ""
+	})
+}
+
+// desktopClick opens the desktop menu on a secondary click.
+func (d *desk) desktopClick(c *ui.Context, root ui.Element) {
+	x, y, over := root.PointerPosition()
+	if root.RightClicked() && over {
+		d.ctxOpen = true
+		d.ctxX, d.ctxY = x, y
+		c.Invalidate()
+		kit.Log("desktop", "context", "at", int(x), int(y))
+	}
 }
 
 // menuBar is the top system bar with menus and status.
@@ -116,6 +184,8 @@ func (d *desk) menuBar(c *ui.Context, p *phrases) {
 			desktop.WifiItemOptions{Title: p.wifiTitle, Empty: p.wifiEmpty})
 		desktop.BatteryItem(c, 0.82, desktop.BatteryItemOptions{Charging: true})
 		desktop.ClockItem(c, desktop.ClockItemOptions{Format: p.clockFmt})
+		d.statusButton(c, p, p.spotT, "g-spot", d.spot, func() { d.spot = !d.spot; d.spotQ = "" })
+		d.statusButton(c, p, p.notifT, "g-cc", d.notifOpen, func() { d.notifOpen = !d.notifOpen })
 		d.langButton(c, p)
 		d.ccButton(c, p)
 	})
@@ -207,6 +277,20 @@ func (d *desk) appleMenu(c *ui.Context, p *phrases) {
 	})
 }
 
+// statusButton is a menu bar icon that toggles a panel.
+func (d *desk) statusButton(c *ui.Context, p *phrases, label, art string, on bool, toggle func()) {
+	t := c.Theme()
+	b := kit.Press(ui.ButtonBase(c).Label(label).Size(t.Space(5.5), t.Space(5.5)).
+		Center().Radius(t.Radius).Expanded(on))
+	b.Children(func() { ui.Icon(c, appicons.Must(art)).Size(t.Space(4), t.Space(4)) })
+	b.Background(b.AnimateColor("bg", t.Border.Alpha(0.6*max(unit(b.Hovered()), unit(on))), ui.Snappy))
+	if kit.Clicked(b, sound.Tap) {
+		toggle()
+		b.SetChanged()
+		kit.Log("macdesk", "status", "item", label)
+	}
+}
+
 // langButton toggles Chinese and English copy.
 func (d *desk) langButton(c *ui.Context, p *phrases) {
 	t := c.Theme()
@@ -259,7 +343,7 @@ func (d *desk) ccButton(c *ui.Context, p *phrases) {
 // SetTheme lasts one frame, so it runs on every build.
 func (d *desk) applyTheme(c *ui.Context) {
 	t := *c.Theme()
-	setTheme(&t, d.controls.Dark)
+	setTheme(&t, d.controls.Dark, d.accent)
 	c.SetTheme(&t)
 	d.dark = d.controls.Dark
 }
@@ -367,23 +451,31 @@ func (d *desk) dockBar(c *ui.Context, p *phrases) {
 	strip.Children(func() {
 		apps := []desktop.DockApp{
 			{Name: p.finder, Art: "app-finder", Running: d.wins["finder"].open},
+			{Name: p.launchpadT, Art: "app-launchpad", Running: d.lpad},
 			{Name: p.safari, Art: "app-safari"},
 			{Name: p.mail, Art: "app-mail", Badge: 3},
 			{Name: p.notes, Art: "app-notes", Running: d.wins["notes"].open},
 			{Name: p.photos, Art: "app-photos"},
 			{Name: p.music, Art: "app-music"},
 			{Name: p.terminal, Art: "app-terminal"},
-			{Name: p.settings, Art: "app-settings"},
+			{Name: p.settings, Art: "app-settings", Running: d.wins["settings"].open},
 			{Name: p.storeT, Art: "app-appstore", Running: d.wins["store"].open},
 		}
-		for _, id := range slices.Sorted(maps.Keys(d.installed)) {
+		for _, id := range sortedApps(d.installed) {
 			apps = append(apps, desktop.DockApp{Name: d.installed[id].manifest.Name,
 				Art:     appArt(id, d.installed[id].manifest.Icon),
 				Running: d.wins["app:"+id] != nil && d.wins["app:"+id].open})
 		}
-		if desktop.Dock(c, apps, &d.dockOpen).Changed() && d.dockOpen != "" {
-			d.openApp(p, d.dockOpen)
-			d.dockOpen = ""
+		apps = append(apps, desktop.DockApp{Name: p.trashT, Art: trashArt(d.trash),
+			Running: d.wins["trash"].open, Separator: true})
+		dock := desktop.Dock(c, apps, &d.dockOpen, &d.dockRight)
+		if dock.Changed() {
+			if d.dockRight != "" {
+				d.openDockMenu(c, p, dock)
+			} else if d.dockOpen != "" {
+				d.openApp(p, d.dockOpen)
+				d.dockOpen = ""
+			}
 		}
 	})
 }
@@ -398,6 +490,13 @@ func (d *desk) openApp(p *phrases, name string) {
 		id = "notes"
 	case p.storeT:
 		id = "store"
+	case p.settings:
+		id = "settings"
+	case p.trashT:
+		id = "trash"
+	case p.launchpadT:
+		d.lpad = !d.lpad
+		return
 	default:
 		for aid, ia := range d.installed {
 			if ia.manifest.Name == name {

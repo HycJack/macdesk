@@ -1,4 +1,4 @@
-package desktop
+﻿package desktop
 
 import (
 	"bytes"
@@ -12,14 +12,14 @@ import (
 func TestWindowFrameAndLights(t *testing.T) {
 	presses := 0
 	tt := ui.NewTester(padded(func(c *ui.Context) {
-		WindowFrame(c, "Kiln calendar", WindowFrameOptions{}, func() { ui.Text(c, "Kiln 2 · cone 6") })
+		WindowFrame(c, "Kiln calendar", WindowFrameOptions{}, func() { ui.Text(c, "Kiln 2 路 cone 6") })
 		_, close, _, zoom := TrafficLights(c, TrafficLightsOptions{})
 		if close.Clicked() || zoom.Clicked() {
 			presses++
 		}
 	}), 480, 400)
 	settles(t, tt)
-	if !exact(tt, "Kiln 2 · cone 6") {
+	if !exact(tt, "Kiln 2 路 cone 6") {
 		t.Errorf("body missing: %q", tt.Texts())
 	}
 	before := baseline()
@@ -58,8 +58,8 @@ func TestTitleTabsPickAndReorder(t *testing.T) {
 
 func menus() []Menu {
 	return []Menu{
-		{Title: "File", Items: []MenuItem{{Label: "New booking", Shortcut: "⌘N"}, {Label: "Export PDF"}}},
-		{Title: "Edit", Items: []MenuItem{{Label: "Undo", Shortcut: "⌘Z"}}},
+		{Title: "File", Items: []MenuItem{{Label: "New booking", Shortcut: "鈱楴"}, {Label: "Export PDF"}}},
+		{Title: "Edit", Items: []MenuItem{{Label: "Undo", Shortcut: "鈱榋"}}},
 	}
 }
 
@@ -104,7 +104,7 @@ func TestDockReportsEveryClick(t *testing.T) {
 	apps := []DockApp{{Name: "Glaze", Art: "app-safari", Badge: 3}, {Name: "Mail", Art: "app-mail", Badge: 120}, {Name: "Calendar", Art: "app-calendar"}}
 	opened, changes := "", 0
 	tt := ui.NewTester(padded(func(c *ui.Context) {
-		if Dock(c, apps, &opened).Changed() {
+		if Dock(c, apps, &opened, new(string)).Changed() {
 			changes++
 		}
 	}), 480, 300)
@@ -120,7 +120,7 @@ func TestDockReportsEveryClick(t *testing.T) {
 	if opened != "Mail" || changes != 2 {
 		t.Errorf("opened %q, changes %d", opened, changes)
 	}
-	tt = ui.NewTester(padded(func(c *ui.Context) { Dock(c, apps, &opened) }), 480, 300)
+	tt = ui.NewTester(padded(func(c *ui.Context) { Dock(c, apps, &opened, new(string)) }), 480, 300)
 	settles(t, tt)
 	still := bytes.Clone(tt.Image().Pix)
 	r := rectOf(t, tt, "Glaze")
@@ -130,7 +130,7 @@ func TestDockReportsEveryClick(t *testing.T) {
 	if bytes.Equal(still, tt.Image().Pix) {
 		t.Error("hovering an app did not magnify it")
 	}
-	panics(t, "badge of 0 or more", func(c *ui.Context) { Dock(c, []DockApp{{Name: "A", Art: "app-safari", Badge: -1}}, new(string)) })
+	panics(t, "badge of 0 or more", func(c *ui.Context) { Dock(c, []DockApp{{Name: "A", Art: "app-safari", Badge: -1}}, new(string), nil) })
 }
 
 func TestLauncherFiltersAndPicks(t *testing.T) {

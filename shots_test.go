@@ -35,6 +35,39 @@ func TestShootDocs(t *testing.T) {
 	shoot(t, tt, "app")
 }
 
+// TestShootOverlays renders Launchpad, Spotlight, the tray and Settings.
+func TestShootOverlays(t *testing.T) {
+	if os.Getenv("MACDESK_SHOTS") == "" {
+		t.Skip("set MACDESK_SHOTS=1 to refresh docs screenshots")
+	}
+	isolateApps(t)
+	d := newDesk()
+	for _, id := range []string{"calc", "snake"} {
+		if err := d.installSample(*sampleByID(id)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	d.wins["notes"].open = false
+	tt := ui.NewTester(d.view, 1280, 820)
+	settle(tt)
+	d.lpad = true
+	settle(tt)
+	shoot(t, tt, "launchpad")
+	d.lpad = false
+	d.spot = true
+	d.spotQ = "设"
+	settle(tt)
+	shoot(t, tt, "spotlight")
+	d.spot = false
+	d.notifOpen = true
+	settle(tt)
+	shoot(t, tt, "notifications")
+	d.notifOpen = false
+	d.openID("settings")
+	settle(tt)
+	shoot(t, tt, "settings")
+}
+
 // TestShootLight renders the light appearance for the README.
 func TestShootLight(t *testing.T) {
 	if os.Getenv("MACDESK_SHOTS") == "" {

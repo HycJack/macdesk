@@ -97,5 +97,10 @@ func (d *desk) installSample(s samplePack) error {
 		return err
 	}
 	defer os.RemoveAll(dir)
-	return d.installApp(dir)
+	if err := d.installApp(dir); err != nil {
+		return err
+	}
+	p := d.tr()
+	d.pushNotif(p.notifInstall+" "+s.name, "v"+s.version+" · "+s.id)
+	return nil
 }

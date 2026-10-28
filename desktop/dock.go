@@ -16,6 +16,8 @@ type DockApp struct {
 	Name, Art string
 	Running   bool
 	Badge     int
+	// Separator draws a divider before the icon, as before the trash.
+	Separator bool
 }
 
 // dockSize is the icon square of the Dock, and dockPanel its height.
@@ -25,7 +27,7 @@ const (
 )
 
 // Dock magnifies under the pointer; clicks report; cue Tap.
-func Dock(c *ui.Context, apps []DockApp, opened *string) ui.Element {
+func Dock(c *ui.Context, apps []DockApp, opened, right *string) ui.Element {
 	names := make([]string, len(apps))
 	for i, a := range apps {
 		if a.Art == "" || a.Badge < 0 {
@@ -47,6 +49,11 @@ func Dock(c *ui.Context, apps []DockApp, opened *string) ui.Element {
 		sheen(c)
 		now := -1
 		for i, a := range apps {
+			if a.Separator {
+				ui.Box(c).Shrink(0).Width(1).Height(t.Space(9)).AlignSelf(ui.Center).
+					Margin(t.Space(0.5), t.Space(1.5), t.Space(0.5), t.Space(1.5)).
+					Background(kit.Glass(t, 0.34))
+			}
 			c.Key(strconv.Quote(a.Name))
 			b := ui.ButtonBase(c).Label(a.Name).Column().Size(t.Space(14), dockPanel).
 				AlignItems(ui.Center).Justify(ui.End).TransformOrigin(0.5, 1)
@@ -89,6 +96,11 @@ func Dock(c *ui.Context, apps []DockApp, opened *string) ui.Element {
 				root.SetChanged()
 				sound.Play(sound.Tap)
 				kit.Log("Dock", "opened", "index", i)
+			}
+			if right != nil && b.RightClicked() {
+				*right = a.Name
+				root.SetChanged()
+				kit.Log("Dock", "menu", "index", i)
 			}
 		}
 		if now != *hover {

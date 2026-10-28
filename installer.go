@@ -187,6 +187,9 @@ func (d *desk) uninstallApp(id string) error {
 		return err
 	}
 	delete(d.installed, id)
+	p := d.tr()
+	d.pushTrash(ia.manifest.Name)
+	d.pushNotif(p.notifRemove+" "+ia.manifest.Name, p.trashHint)
 	kit.Log("appstore", "uninstall", "id", id)
 	return nil
 }
