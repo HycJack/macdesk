@@ -19,8 +19,12 @@ type Menu struct {
 	Items []MenuItem
 }
 
+// MenuBarOptions set how the bar sits in its host surface: Flat drops the
+// bar's own fill and edge, for a host that already draws them.
+type MenuBarOptions struct{ Flat bool }
+
 // MenuBar is an app menu bar; opening reports; cue Open.
-func MenuBar(c *ui.Context, app string, menus []Menu, chosen *string) ui.Element {
+func MenuBar(c *ui.Context, app string, menus []Menu, chosen *string, o MenuBarOptions) ui.Element {
 	titles, labels := make([]string, len(menus)), []string{}
 	for i, m := range menus {
 		if len(m.Items) == 0 {
@@ -38,8 +42,11 @@ func MenuBar(c *ui.Context, app string, menus []Menu, chosen *string) ui.Element
 		panic(fmt.Sprintf("desktop: MenuBar %q needs an app name and a chosen command", app))
 	}
 	t := c.Theme()
-	root := ui.Row(c).FillWidth().Gap(t.Space(0.5)).AlignItems(ui.Center).Padding(t.Space(0.5), t.Space(2)).
-		Background(t.SurfaceHover).BorderWidth(0, 0, 1, 0).BorderColor(t.Border).Role(ui.RoleMenuBar)
+	root := ui.Row(c).FillWidth().Gap(t.Space(0.5)).AlignItems(ui.Center).Padding(t.Space(0.5), t.Space(1)).
+		Role(ui.RoleMenuBar)
+	if !o.Flat {
+		root = root.Background(t.SurfaceHover).BorderWidth(0, 0, 1, 0).BorderColor(t.Border)
+	}
 	kit.Arrive(root, ui.Pose{Y: -t.Space(1), Fade: 1}, 0)
 	opens := ui.Local(root, "opens", func() map[string]*bool { return map[string]*bool{} })
 	root.Children(func() {

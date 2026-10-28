@@ -66,7 +66,7 @@ func menus() []Menu {
 func TestMenuBarOpensOneAndChooses(t *testing.T) {
 	chosen, changes := "", 0
 	tt := ui.NewTester(padded(func(c *ui.Context) {
-		if MenuBar(c, "Glaze", menus(), &chosen).Changed() {
+		if MenuBar(c, "Glaze", menus(), &chosen, MenuBarOptions{}).Changed() {
 			changes++
 		}
 	}), 480, 400)
@@ -85,7 +85,7 @@ func TestMenuBarOpensOneAndChooses(t *testing.T) {
 		t.Errorf("chosen %q, changes %d", chosen, changes)
 	}
 	panics(t, "repeated", func(c *ui.Context) {
-		MenuBar(c, "Glaze", []Menu{{Title: "A", Items: []MenuItem{{Label: "Close"}}}, {Title: "B", Items: []MenuItem{{Label: "Close"}}}}, new(string))
+		MenuBar(c, "Glaze", []Menu{{Title: "A", Items: []MenuItem{{Label: "Close"}}}, {Title: "B", Items: []MenuItem{{Label: "Close"}}}}, new(string), MenuBarOptions{})
 	})
 }
 
@@ -101,7 +101,7 @@ func TestStatusBarTones(t *testing.T) {
 }
 
 func TestDockReportsEveryClick(t *testing.T) {
-	apps := []DockApp{{Name: "Glaze", Icon: "flame", Badge: 3}, {Name: "Mail", Icon: "mail", Badge: 120}, {Name: "Calendar", Icon: "calendar"}}
+	apps := []DockApp{{Name: "Glaze", Art: "app-safari", Badge: 3}, {Name: "Mail", Art: "app-mail", Badge: 120}, {Name: "Calendar", Art: "app-calendar"}}
 	opened, changes := "", 0
 	tt := ui.NewTester(padded(func(c *ui.Context) {
 		if Dock(c, apps, &opened).Changed() {
@@ -130,7 +130,7 @@ func TestDockReportsEveryClick(t *testing.T) {
 	if bytes.Equal(still, tt.Image().Pix) {
 		t.Error("hovering an app did not magnify it")
 	}
-	panics(t, "badge of 0 or more", func(c *ui.Context) { Dock(c, []DockApp{{Name: "A", Icon: "flame", Badge: -1}}, new(string)) })
+	panics(t, "badge of 0 or more", func(c *ui.Context) { Dock(c, []DockApp{{Name: "A", Art: "app-safari", Badge: -1}}, new(string)) })
 }
 
 func TestLauncherFiltersAndPicks(t *testing.T) {
@@ -183,7 +183,7 @@ func TestWindowSwitcherCycles(t *testing.T) {
 func TestDesktopIconSelectsThenOpens(t *testing.T) {
 	selected, opened, changes := false, 0, 0
 	tt := ui.NewTester(padded(func(c *ui.Context) {
-		if DesktopIcon(c, "Firing logs", "folder", &selected, &opened).Changed() {
+		if DesktopIcon(c, "Firing logs", "f-folder-blue", &selected, &opened).Changed() {
 			changes++
 		}
 	}), 300, 300)
@@ -204,7 +204,7 @@ func TestDesktopIconSelectsThenOpens(t *testing.T) {
 	if !selected || opened != 2 || changes != 3 {
 		t.Errorf("selected %v, opened %d, changes %d", selected, opened, changes)
 	}
-	panics(t, "0 or more", func(c *ui.Context) { n := -1; DesktopIcon(c, "A", "folder", new(bool), &n) })
+	panics(t, "0 or more", func(c *ui.Context) { n := -1; DesktopIcon(c, "A", "f-folder-blue", new(bool), &n) })
 }
 
 func TestNotificationCenterGroupsAndClears(t *testing.T) {

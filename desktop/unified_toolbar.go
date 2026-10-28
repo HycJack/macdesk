@@ -10,8 +10,12 @@ import (
 	"github.com/egoist/mygo/ui"
 )
 
-// UnifiedToolbarOptions word the toolbar.
-type UnifiedToolbarOptions struct{ Subtitle, Placeholder, Back, Forward string }
+// UnifiedToolbarOptions word the toolbar; Compact leaves the title to the
+// window frame and keeps only the nav and the search field.
+type UnifiedToolbarOptions struct {
+	Subtitle, Placeholder, Back, Forward string
+	Compact                              bool
+}
 
 // UnifiedToolbar has nav, a title and search; cue Tap.
 func UnifiedToolbar(c *ui.Context, title string, query *string, o UnifiedToolbarOptions) (root, back, forward ui.Element) {
@@ -26,7 +30,6 @@ func UnifiedToolbar(c *ui.Context, title string, query *string, o UnifiedToolbar
 		Background(t.SurfaceHover).BorderWidth(0, 0, 1, 0).BorderColor(t.Border).Role(ui.RoleToolbar)
 	kit.Arrive(root, ui.Pose{Y: -t.Space(1), Fade: 1}, 0)
 	root.Children(func() {
-		lights(c, true)
 		nav := func(label, mark string) ui.Element {
 			b := kit.Press(ui.ButtonBase(c).Label(label).Padding(t.Space(1)).Radius(t.Radius))
 			b.Background(b.AnimateColor("bg", t.Border.Alpha(0.6*unit(b.Hovered())), ui.Snappy))
@@ -42,6 +45,9 @@ func UnifiedToolbar(c *ui.Context, title string, query *string, o UnifiedToolbar
 			forward = nav(o.Forward, "chevron-right")
 		})
 		ui.Column(c).Grow(1).MinWidth(0).Children(func() {
+			if o.Compact {
+				return
+			}
 			ui.Text(c, title).FontSize(t.Rem(0.86)).Bold().FillWidth().MinWidth(0).SingleLine()
 			if o.Subtitle != "" {
 				kit.Muted(c, o.Subtitle).FontSize(t.Rem(0.7)).FillWidth().MinWidth(0).SingleLine()

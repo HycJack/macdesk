@@ -17,19 +17,10 @@ import (
 const (
 	winW   float32 = 1280
 	winH   float32 = 820
-	menuH  float32 = 30
-	dockH  float32 = 78
 	winFW  float32 = 620
 	winFH  float32 = 400
 	aboutW float32 = 360
 	aboutH float32 = 280
-)
-
-// Wallpaper colors, fixed like a real desktop picture.
-var (
-	wallA = ui.Hex("#1e3a8a")
-	wallB = ui.Hex("#be185d")
-	wallC = ui.Hex("#f97316")
 )
 
 // winState is one simulated window's geometry.
@@ -68,8 +59,8 @@ func newDesk() *desk {
 	d := &desk{lang: "zh", wifi: "Crychic-5G", wins: map[string]*winState{},
 		apps: map[string]*appInstance{}}
 	d.controls.Dark = true
-	d.wins["finder"] = &winState{open: true, x: 120, y: 80}
-	d.wins["notes"] = &winState{open: true, x: 600, y: 220}
+	d.wins["finder"] = &winState{open: true, x: 96, y: 74}
+	d.wins["notes"] = &winState{open: true, x: 700, y: 336}
 	d.wins["about"] = &winState{}
 	d.wins["store"] = &winState{x: 430, y: 110}
 	d.finderIn = zh.finderGroups[0].Items[0].Name
@@ -83,12 +74,9 @@ func newDesk() *desk {
 func (d *desk) view(c *ui.Context) {
 	d.applyTheme(c)
 	p := d.tr()
-	root := ui.Box(c).Fill()
-	root.LinearGradient(ui.LinearGradient{
-		Angle: 160, Oklab: true,
-		Stops: []ui.GradientStop{{Color: wallA, At: 0}, {Color: wallB, At: 0.55}, {Color: wallC, At: 1}},
-	})
+	root := wallpaper(c)
 	root.Children(func() {
+		glow(c)
 		d.menuBar(c, p)
 		d.icons(c, p)
 		d.window(c, p, "finder", p.finderTitle, winFW, winFH, d.finderBody)
@@ -101,11 +89,11 @@ func (d *desk) view(c *ui.Context) {
 			}
 			inst := d.ensureApp(id)
 			ia := d.installed[id]
-			d.window(c, p, wid, ia.manifest.Name, 560, 420, func(cc *ui.Context) {
+			d.window(c, p, wid, ia.manifest.Name, 620, 460, func(cc *ui.Context) {
 				d.renderAppView(cc, inst)
 			})
 		}
-		d.window(c, p, "store", p.storeT, 720, 480, d.storeBody)
+		d.window(c, p, "store", p.storeT, 760, 520, d.storeBody)
 		d.dockBar(c, p)
 	})
 }
@@ -113,12 +101,13 @@ func (d *desk) view(c *ui.Context) {
 // menuBar is the top system bar with menus and status.
 func (d *desk) menuBar(c *ui.Context, p *phrases) {
 	t := c.Theme()
-	bar := ui.Row(c).FillWidth().AlignItems(ui.Center).Background(t.SurfaceHover).
-		BorderWidth(0, 0, 1, 0).BorderColor(t.Border).Padding(0, t.Space(1))
+	bar := ui.Row(c).Absolute().Top(0).Left(0).Right(0).Height(menuH).AlignItems(ui.Center).
+		Padding(0, t.Space(1)).Background(glass(t, 0.72)).
+		BorderWidth(0, 0, 1, 0).BorderColor(hairline(t))
 	bar.Children(func() {
 		d.appleMenu(c, p)
 		ui.Box(c).Grow(1).Children(func() {
-			r := desktop.MenuBar(c, "macdesk", d.menus(p), &d.chosen)
+			r := desktop.MenuBar(c, "macdesk", d.menus(p), &d.chosen, desktop.MenuBarOptions{Flat: true})
 			if r.Changed() {
 				d.menuChosen(p)
 			}
@@ -270,13 +259,7 @@ func (d *desk) ccButton(c *ui.Context, p *phrases) {
 // SetTheme lasts one frame, so it runs on every build.
 func (d *desk) applyTheme(c *ui.Context) {
 	t := *c.Theme()
-	if d.controls.Dark {
-		t.Background, t.Surface, t.SurfaceHover = ui.Hex("#1c1c1e"), ui.Hex("#2c2c2e"), ui.Hex("#3a3a3c")
-		t.Text, t.TextMuted, t.Border = ui.Hex("#f5f5f7"), ui.Hex("#98989d"), ui.Hex("#48484a")
-	} else {
-		t.Background, t.Surface, t.SurfaceHover = ui.Hex("#ffffff"), ui.Hex("#f5f5f7"), ui.Hex("#e8e8ed")
-		t.Text, t.TextMuted, t.Border = ui.Hex("#1d1d1f"), ui.Hex("#6e6e73"), ui.Hex("#d2d2d7")
-	}
+	setTheme(&t, d.controls.Dark)
 	c.SetTheme(&t)
 	d.dark = d.controls.Dark
 }
@@ -284,11 +267,11 @@ func (d *desk) applyTheme(c *ui.Context) {
 // icons are the desktop shortcuts.
 func (d *desk) icons(c *ui.Context, p *phrases) {
 	t := c.Theme()
-	col := ui.Column(c).Absolute().Top(menuH + 14).Left(14).Gap(t.Space(2))
+	col := ui.Column(c).Absolute().Top(menuH + t.Space(4)).Left(t.Space(4)).Gap(t.Space(1.5))
 	col.Children(func() {
 		before := d.iconOpen
-		desktop.DesktopIcon(c, p.macHD, "hard-drive", &d.selHD, &d.iconOpen)
-		desktop.DesktopIcon(c, p.projects, "folder", &d.selProj, &d.iconOpen)
+		desktop.DesktopIcon(c, p.macHD, "f-hd", &d.selHD, &d.iconOpen)
+		desktop.DesktopIcon(c, p.projects, "f-folder-blue", &d.selProj, &d.iconOpen)
 		if d.iconOpen > before {
 			d.openID("finder")
 		}
@@ -308,8 +291,12 @@ func (d *desk) window(c *ui.Context, p *phrases, id, title string, w, h float32,
 	} else {
 		surf = surf.Absolute().Top(ws.y).Left(ws.x).Size(w, h)
 	}
-	surf.Clip().Radius(t.Radius*2).Background(t.Background).Border(1, t.Border).
-		Shadow(0, 12, 32, 0, kit.Shade(0.28)).Role(ui.RoleGroup).Label(title)
+	shadow := kit.Shade(0.32)
+	if d.focus == id {
+		shadow = kit.Shade(0.52)
+	}
+	surf.Clip().Radius(winRadius).Background(t.Background).Border(1, hairline(t)).
+		Shadow(0, 22, 56, -8, shadow).Role(ui.RoleGroup).Label(title)
 	surf.Children(func() {
 		d.titleBar(c, p, id, title)
 		ui.Box(c).Fill().Children(func() { body(c) })
@@ -320,8 +307,8 @@ func (d *desk) window(c *ui.Context, p *phrases, id, title string, w, h float32,
 func (d *desk) titleBar(c *ui.Context, p *phrases, id, title string) {
 	ws := d.wins[id]
 	t := c.Theme()
-	bar := ui.Row(c).FillWidth().Gap(t.Space(3)).AlignItems(ui.Center).
-		Padding(t.Space(2), t.Space(3)).Background(t.SurfaceHover).
+	bar := ui.Row(c).FillWidth().Height(titleH).Gap(t.Space(3)).AlignItems(ui.Center).
+		Padding(0, t.Space(3)).Background(t.Surface).
 		BorderWidth(0, 0, 1, 0).BorderColor(t.Border)
 	bar.Children(func() {
 		_, close, mini, zoom := desktop.TrafficLights(c, desktop.TrafficLightsOptions{
@@ -345,7 +332,7 @@ func (d *desk) titleBar(c *ui.Context, p *phrases, id, title string) {
 			bar.SetChanged()
 			kit.Log("macdesk", "zoom", "win", id)
 		}
-		ui.Text(c, title).FontSize(t.Rem(0.8)).Bold().Grow(1).MinWidth(0).
+		ui.Text(c, title).FontSize(t.Rem(0.95)).Bold().Grow(1).MinWidth(0).
 			TextAlign(ui.Center).SingleLine().Unselectable()
 		ui.Row(c).Width(t.Space(13)).Shrink(0)
 	})
@@ -375,23 +362,23 @@ func (d *desk) drag(c *ui.Context, ws *winState, bar ui.Element) {
 // dockBar centers the Dock on the bottom edge.
 func (d *desk) dockBar(c *ui.Context, p *phrases) {
 	t := c.Theme()
-	strip := ui.Row(c).Absolute().Left(0).Right(0).Bottom(0).Height(dockH).
-		Justify(ui.Center).AlignItems(ui.End).Padding(0, t.Space(2))
+	strip := ui.Row(c).Absolute().Left(0).Right(0).Bottom(t.Space(1.5)).Height(dockH).
+		Justify(ui.Center).AlignItems(ui.End)
 	strip.Children(func() {
 		apps := []desktop.DockApp{
-			{Name: p.finder, Icon: "folder", Running: d.wins["finder"].open},
-			{Name: p.safari, Icon: "compass"},
-			{Name: p.mail, Icon: "mail", Badge: 3},
-			{Name: p.notes, Icon: "sticky-note", Running: d.wins["notes"].open},
-			{Name: p.photos, Icon: "image"},
-			{Name: p.music, Icon: "music"},
-			{Name: p.terminal, Icon: "square-terminal"},
-			{Name: p.settings, Icon: "settings-2"},
-			{Name: p.storeT, Icon: "shopping-cart", Running: d.wins["store"].open},
+			{Name: p.finder, Art: "app-finder", Running: d.wins["finder"].open},
+			{Name: p.safari, Art: "app-safari"},
+			{Name: p.mail, Art: "app-mail", Badge: 3},
+			{Name: p.notes, Art: "app-notes", Running: d.wins["notes"].open},
+			{Name: p.photos, Art: "app-photos"},
+			{Name: p.music, Art: "app-music"},
+			{Name: p.terminal, Art: "app-terminal"},
+			{Name: p.settings, Art: "app-settings"},
+			{Name: p.storeT, Art: "app-appstore", Running: d.wins["store"].open},
 		}
 		for _, id := range slices.Sorted(maps.Keys(d.installed)) {
 			apps = append(apps, desktop.DockApp{Name: d.installed[id].manifest.Name,
-				Icon:    "grid-2x2",
+				Art:     appArt(id, d.installed[id].manifest.Icon),
 				Running: d.wins["app:"+id] != nil && d.wins["app:"+id].open})
 		}
 		if desktop.Dock(c, apps, &d.dockOpen).Changed() && d.dockOpen != "" {
@@ -440,12 +427,12 @@ func (d *desk) openID(id string) {
 
 // nextWinX cascades new windows away from the corner.
 func (d *desk) nextWinX() float32 {
-	return 160 + float32(len(d.wins)%6)*36
+	return 150 + float32(len(d.wins)%6)*52
 }
 
 // nextWinY cascades new windows away from the corner.
 func (d *desk) nextWinY() float32 {
-	return 100 + float32(len(d.wins)%6)*32
+	return 70 + float32(len(d.wins)%6)*40
 }
 
 // glyph is a Lucide icon size DIP square.

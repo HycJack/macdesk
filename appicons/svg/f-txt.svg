@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <linearGradient id="txP" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#f2f3f6"/></linearGradient>
+  <path d="M13 8h26l12 12v36a4 4 0 0 1-4 4H17a4 4 0 0 1-4-4V12a4 4 0 0 1 4-4z" fill="url(#txP)" stroke="rgba(60,70,86,.24)" stroke-width="1"/>
+  <path d="M39 8l12 12H41a2 2 0 0 1-2-2z" fill="#d8dce3"/>
+  <path d="M39 8l12 12H41a2 2 0 0 1-2-2z" fill="none" stroke="rgba(60,70,86,.2)" stroke-width=".9"/>
+  <g fill="#9aa2ae"><rect x="19" y="26" width="26" height="1.9" rx=".95"/><rect x="19" y="30.6" width="21" height="1.9" rx=".95"/>
+    <rect x="19" y="35.2" width="26" height="1.9" rx=".95"/><rect x="19" y="39.8" width="24" height="1.9" rx=".95"/>
+    <rect x="19" y="44.4" width="14" height="1.9" rx=".95"/></g>
+  <rect x="13" y="49" width="25" height="11" rx="3" fill="#8a919d"/>
+  <text x="25.5" y="57.4" font-family="Inter,sans-serif" font-size="8.6" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing=".3">TXT</text>
+</svg>

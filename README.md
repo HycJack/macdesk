@@ -7,7 +7,19 @@ macdesk is a demo built on [MyGo](https://github.com/egoist/mygo) (native UI) an
 [yaegi](https://github.com/traefik/yaegi) (Go interpreter). The desktop is compiled Go; the apps are `.goapp`
 packages interpreted inside a sandbox, so installs need no compiler and no restart.
 
+The look — glass dock, 25 DIP menu bar, 11 DIP windows, traffic lights, and the whole icon set — follows
+[StarKnightt/macos-web](https://github.com/StarKnightt/macos-web): its design tokens and its 127 SVG icons are
+rendered by MyGo's own SVG engine at any size.
+
 ![macdesk desktop](docs/desktop.png)
+
+Light appearance, same tokens and icons:
+
+![light appearance](docs/light.png)
+
+All 127 icons: app artwork, glyphs and file icons, drawn from one set:
+
+![icon set](docs/icons.png)
 
 ## App Store
 
@@ -43,6 +55,7 @@ An app is a folder (or a zip) with `manifest.json` and `main.go`, at most 2 MiB:
 | `version` | three numeric segments, `1.0.0` |
 | `api` | must be `1` |
 | `entry` | source file, default `main.go` |
+| `icon` | optional name from the bundled set, e.g. `app-calculator`; see `appicons/svg/` |
 | `permissions` | `timer` for `After`, `storage` for the storage calls |
 
 `main.go` exports four hooks:
@@ -115,7 +128,9 @@ manifest + main.go  ──yaegi──▶  hooks  ──View()──▶  Node tre
 - `apphost.go` compiles app source in a sandboxed interpreter, validates hooks, and calls them with a timeout.
 - `appkit.go` is the node API and its interpreter symbol table; `viewtree.go` renders nodes with MyGo widgets.
 - `installer.go` validates manifests and installs, imports (folder or zip) and prunes old versions.
-- `appstore.go` is the store UI; `desk.go` is the desktop, windows, dock and menu bar.
+- `appstore.go` is the store UI; `theme.go` holds the palettes and the desktop metrics.
+- `appicons/` embeds the set: `svg/` is generated from macos-web's sheet by `tools/extract_icons.go`, `custom/` holds the
+  hand-drawn and text-free redraws that win on a shared name.
 - Widgets (`desktop/`, `display/`, `layout/`, `typography/`, `icon/`, `sound/`, `kit/`) come from
   [CrychicUI](https://github.com/ELY-Open-Source/CrychicUI).
 
@@ -126,8 +141,14 @@ go vet ./... && go test ./...
 ```
 
 The suite drives MyGo's tester: it installs samples, ticks timers, clicks cells, walks the interpreter's state and
-checks the store flow end to end. `MACDESK_SHOTS=1 go test -run TestShootDocs .` refreshes `docs/*.png`.
+checks the store flow end to end. `MACDESK_SHOTS=1 go test -run 'TestShoot' .` refreshes `docs/*.png`.
 
 ## Credits
 
-MyGo and its Lucide icons, yaegi, and CrychicUI for the macOS-flavoured widgets. MIT licensed, see [LICENSE](LICENSE).
+- [StarKnightt/macos-web](https://github.com/StarKnightt/macos-web) for the icon set under `appicons/svg/`, the
+  design tokens the palette here follows, and the squircle outline of the app icons. MIT.
+- [MyGo](https://github.com/egoist/mygo) for the native UI and its SVG renderer, and
+  [yaegi](https://github.com/traefik/yaegi) for the interpreter.
+- [Lucide](https://lucide.dev) icons for the remaining glyphs, and CrychicUI for the macOS-flavoured widgets.
+
+MIT licensed, see [LICENSE](LICENSE).

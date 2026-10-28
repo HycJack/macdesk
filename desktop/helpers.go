@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/HycJack/macdesk/appicons"
 	"github.com/HycJack/macdesk/display"
 	"github.com/HycJack/macdesk/icon"
 	"github.com/HycJack/macdesk/kit"
@@ -29,6 +30,15 @@ func unit(v bool) float32 {
 // glyph is a Lucide icon size DIP square.
 func glyph(c *ui.Context, name string, size float32) ui.Element {
 	return ui.Icon(c, icon.Must(name)).Size(size, size).Shrink(0)
+}
+
+// mark is a sidebar or list icon: app artwork when the set has it, which
+// keeps its own colours, else a glyph in the text colour.
+func mark(c *ui.Context, name string, size float32) ui.Element {
+	if svg, ok := appicons.Get(name); ok {
+		return ui.Image(c, svg).Size(size, size).Shrink(0)
+	}
+	return glyph(c, name, size)
 }
 
 // card is the shared arriving card surface.

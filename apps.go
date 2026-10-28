@@ -21,7 +21,7 @@ func (d *desk) finderBody(c *ui.Context) {
 		})
 		ui.Column(c).Grow(1).FillHeight().Children(func() {
 			tb, _, _ := desktop.UnifiedToolbar(c, p.finderTitle, &d.query,
-				desktop.UnifiedToolbarOptions{})
+				desktop.UnifiedToolbarOptions{Placeholder: p.searchPH, Back: p.backL, Forward: p.fwdL, Compact: true})
 			tb.FillWidth()
 			ui.Scroll(c).Fill().Padding(t.Space(3)).Children(func() {
 				files := d.finderFiles(p)
@@ -62,8 +62,8 @@ func (d *desk) fileTile(c *ui.Context, f finderFile) {
 	b.Background(b.AnimateColor("bg", t.SurfaceHover.Alpha(unit(b.Hovered())), ui.Snappy))
 	kit.Clicked(b, sound.Tap)
 	b.Children(func() {
-		ui.Box(c).Size(t.Space(10), t.Space(10)).Center().Children(func() {
-			glyph(c, f.Mark, t.Space(9)).TextColor(t.Accent)
+		ui.Box(c).Size(t.Space(11), t.Space(11)).Center().Children(func() {
+			desktop.Art(c, f.Mark, t.Space(10))
 		})
 		ui.Text(c, f.Name).FontSize(t.Rem(0.76)).FillWidth().MinWidth(0).
 			TextAlign(ui.Center).SingleLine()

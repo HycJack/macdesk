@@ -1,6 +1,7 @@
 package desktop
 
 import (
+	"github.com/HycJack/macdesk/appicons"
 	"github.com/HycJack/macdesk/kit"
 	"github.com/HycJack/macdesk/sound"
 	"github.com/egoist/mygo/ui"
@@ -18,12 +19,14 @@ func TrafficLights(c *ui.Context, o TrafficLightsOptions) (root, close, minimize
 	root = ui.Row(c).Gap(t.Space(2)).AlignItems(ui.Center).Role(ui.RoleToolbar)
 	kit.Arrive(root, ui.Pose{Scale: 0.8, Fade: 1}, 0)
 	root.Children(func() {
-		light := func(label, mark string, ink ui.Color) ui.Element {
-			b := kit.Press(ui.ButtonBase(c).Label(label).Size(t.Space(3.5), t.Space(3.5)).Center().Radius(999))
-			hover := b.AnimateTo("hover", unit(b.Hovered()), ui.Snappy)
-			b.Background(ink.Mix(t.Text, 0.12*hover)).Border(1, ink.Mix(t.Text, 0.2))
+		light := func(label, mark string, from, to ui.Color) ui.Element {
+			b := kit.Press(ui.ButtonBase(c).Label(label).Size(12, 12).Center().Radius(999))
+			b.LinearGradient(ui.LinearGradient{Angle: 180, From: from, To: to}).
+				Border(0.5, kit.Shade(0.18))
+			reveal := b.AnimateTo("reveal", unit(root.Hovered()), ui.Snappy)
 			b.Children(func() {
-				glyph(c, mark, t.Space(2.5)).TextColor(t.Text.Alpha(0.7)).Opacity(hover)
+				ui.Icon(c, appicons.Must(mark)).Size(t.Space(2.5), t.Space(2.5)).
+					TextColor(kit.Shade(0.55)).Opacity(reveal)
 			})
 			if b.Clicked() {
 				sound.Play(sound.Tap)
@@ -31,9 +34,9 @@ func TrafficLights(c *ui.Context, o TrafficLightsOptions) (root, close, minimize
 			}
 			return b
 		}
-		close = light(o.Close, "x", t.Danger)
-		minimize = light(o.Minimize, "minus", t.Warning)
-		zoom = light(o.Zoom, "maximize-2", t.Success)
+		close = light(o.Close, "g-x", ui.Hex("#ff6a5f"), ui.Hex("#ee4a3f"))
+		minimize = light(o.Minimize, "g-minus", ui.Hex("#ffd166"), ui.Hex("#f5b21c"))
+		zoom = light(o.Zoom, "g-plus", ui.Hex("#5fdc7d"), ui.Hex("#28c840"))
 	})
 	return root, close, minimize, zoom
 }

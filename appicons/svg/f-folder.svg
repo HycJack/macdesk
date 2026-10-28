@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <linearGradient id="fdA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3fb"/><stop offset="1" stop-color="#4eb5f2"/></linearGradient>
+  <linearGradient id="fdB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6dcfc"/><stop offset="1" stop-color="#59b9f4"/></linearGradient>
+  <path d="M4 17.5A4.5 4.5 0 0 1 8.5 13h13.2c1.4 0 2.7.65 3.55 1.76L28 18h27.5A4.5 4.5 0 0 1 60 22.5V25H4z" fill="url(#fdA)"/>
+  <path d="M4 24h56v27.5A4.5 4.5 0 0 1 55.5 56h-47A4.5 4.5 0 0 1 4 51.5z" fill="url(#fdB)"/>
+  <path d="M4 24h56v1.6H4z" fill="rgba(255,255,255,.5)"/>
+</svg>

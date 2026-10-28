@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <linearGradient id="apG" x1=".1" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#c8ccd4"/><stop offset="1" stop-color="#8f95a1"/></linearGradient>
+  <rect x="8" y="8" width="48" height="48" rx="12" fill="url(#apG)"/>
+  <path d="M32 20 42 44H22z" fill="#fff" opacity=".9"/>
+</svg>

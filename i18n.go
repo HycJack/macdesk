@@ -20,6 +20,7 @@ type phrases struct {
 	ccT                                                            [4]string
 	ccVol, ccBri, ccOn, ccOff                                      string
 	wifiTitle, wifiEmpty                                           string
+	searchPH, backL, fwdL                                          string
 	finderTitle, finderEmpty                                       string
 	finderGroups                                                   []desktop.SourceGroup
 	finderFiles                                                    []finderFile
@@ -30,6 +31,8 @@ type phrases struct {
 	storeT, installedT, availableT                                 string
 	openL, installL, uninstallL, importL                           string
 	importPH, permsT, storeEmpty, storeErrT                        string
+	storeTag, storeEntryT, storeAPIT, storeLimitT                  string
+	moreT                                                          string
 }
 
 var zh = phrases{
@@ -46,23 +49,24 @@ var zh = phrases{
 	ccT:   [4]string{"Wi-Fi", "蓝牙", "专注", "深色模式"},
 	ccVol: "声音", ccBri: "显示器", ccOn: "开", ccOff: "关",
 	wifiTitle: "网络", wifiEmpty: "未找到网络", finderTitle: "项目", finderEmpty: "没有匹配的项目",
+	searchPH: "搜索", backL: "后退", fwdL: "前进",
 	finderGroups: []desktop.SourceGroup{
 		{Title: "个人收藏", Items: []desktop.SourceItem{
-			{Name: "AirDrop", Icon: "airdrop"}, {Name: "最近项目", Icon: "clock"},
-			{Name: "应用程序", Icon: "grid-2x2", Count: 12}, {Name: "桌面", Icon: "monitor"},
-			{Name: "文稿", Icon: "file", Count: 3}, {Name: "下载", Icon: "download", Count: 2},
+			{Name: "AirDrop", Icon: "g-airdrop"}, {Name: "最近项目", Icon: "g-clock-a"},
+			{Name: "应用程序", Icon: "g-apps", Count: 12}, {Name: "桌面", Icon: "g-desktop"},
+			{Name: "文稿", Icon: "g-docs", Count: 3}, {Name: "下载", Icon: "g-download", Count: 2},
 		}},
-		{Title: "位置", Items: []desktop.SourceItem{{Name: "Macintosh HD", Icon: "hard-drive"}}},
+		{Title: "位置", Items: []desktop.SourceItem{{Name: "Macintosh HD", Icon: "g-hd"}}},
 	},
 	finderFiles: []finderFile{
-		{"设计稿.fig", "pen-tool", "昨天 14:20"}, {"预算表.numbers", "table", "周一 09:00"},
-		{"路线图.pdf", "file-text", "10-20"}, {"图标.png", "image", "10-18"},
-		{"会议记录.md", "file-text", "10-15"}, {"构建产物", "folder", "10-12"},
-		{"演示.key", "presentation", "10-10"}, {"数据.csv", "table", "10-08"},
+		{"设计稿.fig", "f-img", "昨天 14:20"}, {"预算表.numbers", "f-code", "周一 09:00"},
+		{"路线图.pdf", "f-txt", "10-20"}, {"图标.png", "f-img", "10-18"},
+		{"会议记录.md", "f-txt", "10-15"}, {"构建产物", "f-folder", "10-12"},
+		{"演示.key", "f-pdf", "10-10"}, {"数据.csv", "f-code", "10-08"},
 	},
 	noteGroups: []desktop.SourceGroup{{Title: "iCloud", Items: []desktop.SourceItem{
-		{Name: "会议记录", Icon: "sticky-note"}, {Name: "购物清单", Icon: "shopping-cart"},
-		{Name: "灵感", Icon: "lightbulb"},
+		{Name: "会议记录", Icon: "g-doc-g"}, {Name: "购物清单", Icon: "g-checklist"},
+		{Name: "灵感", Icon: "g-star"},
 	}}},
 	noteBodies: []string{
 		"会议要点：\n- 1500 个组件全部就位\n- 下一步：macOS 桌面演示",
@@ -77,6 +81,9 @@ var zh = phrases{
 	openL: "打开", installL: "安装", uninstallL: "卸载", importL: "导入",
 	importPH: "输入 .goapp 包路径", permsT: "权限：",
 	storeEmpty: "没有可安装的应用", storeErrT: "安装失败",
+	storeTag: "用 Go 写的小软件，装完即用：界面由系统绘制，脚本在沙箱里运行。",
+	storeEntryT: "入口", storeAPIT: "接口", storeLimitT: "上限",
+	moreT: "这里还有",
 }
 
 var en = phrases{
@@ -93,23 +100,24 @@ var en = phrases{
 	ccT:   [4]string{"Wi-Fi", "Bluetooth", "Focus", "Dark Mode"},
 	ccVol: "Sound", ccBri: "Display", ccOn: "On", ccOff: "Off",
 	wifiTitle: "Networks", wifiEmpty: "No networks found", finderTitle: "Projects", finderEmpty: "No matches",
+	searchPH: "Search", backL: "Back", fwdL: "Forward",
 	finderGroups: []desktop.SourceGroup{
 		{Title: "Favorites", Items: []desktop.SourceItem{
-			{Name: "AirDrop", Icon: "airdrop"}, {Name: "Recents", Icon: "clock"},
-			{Name: "Applications", Icon: "grid-2x2", Count: 12}, {Name: "Desktop", Icon: "monitor"},
-			{Name: "Documents", Icon: "file", Count: 3}, {Name: "Downloads", Icon: "download", Count: 2},
+			{Name: "AirDrop", Icon: "g-airdrop"}, {Name: "Recents", Icon: "g-clock-a"},
+			{Name: "Applications", Icon: "g-apps", Count: 12}, {Name: "Desktop", Icon: "g-desktop"},
+			{Name: "Documents", Icon: "g-docs", Count: 3}, {Name: "Downloads", Icon: "g-download", Count: 2},
 		}},
-		{Title: "Locations", Items: []desktop.SourceItem{{Name: "Macintosh HD", Icon: "hard-drive"}}},
+		{Title: "Locations", Items: []desktop.SourceItem{{Name: "Macintosh HD", Icon: "g-hd"}}},
 	},
 	finderFiles: []finderFile{
-		{"Design.fig", "pen-tool", "Yesterday 14:20"}, {"Budget.numbers", "table", "Mon 09:00"},
-		{"Roadmap.pdf", "file-text", "10-20"}, {"Icon.png", "image", "10-18"},
-		{"Meeting notes.md", "file-text", "10-15"}, {"Builds", "folder", "10-12"},
-		{"Keynote.key", "presentation", "10-10"}, {"Data.csv", "table", "10-08"},
+		{"Design.fig", "f-img", "Yesterday 14:20"}, {"Budget.numbers", "f-code", "Mon 09:00"},
+		{"Roadmap.pdf", "f-txt", "10-20"}, {"Icon.png", "f-img", "10-18"},
+		{"Meeting notes.md", "f-txt", "10-15"}, {"Builds", "f-folder", "10-12"},
+		{"Keynote.key", "f-pdf", "10-10"}, {"Data.csv", "f-code", "10-08"},
 	},
 	noteGroups: []desktop.SourceGroup{{Title: "iCloud", Items: []desktop.SourceItem{
-		{Name: "Meeting notes", Icon: "sticky-note"}, {Name: "Shopping list", Icon: "shopping-cart"},
-		{Name: "Ideas", Icon: "lightbulb"},
+		{Name: "Meeting notes", Icon: "g-doc-g"}, {Name: "Shopping list", Icon: "g-checklist"},
+		{Name: "Ideas", Icon: "g-star"},
 	}}},
 	noteBodies: []string{
 		"Key points:\n- All 1500 components done\n- Next: macOS desktop demo",
@@ -124,6 +132,9 @@ var en = phrases{
 	openL: "Open", installL: "Install", uninstallL: "Uninstall", importL: "Import",
 	importPH: "Path to a .goapp package", permsT: "Permissions:",
 	storeEmpty: "Nothing to install", storeErrT: "Install failed",
+	storeTag:    "Small programs written in Go: the system draws the views, the script stays sandboxed.",
+	storeEntryT: "Entry", storeAPIT: "API", storeLimitT: "Limit",
+	moreT: "More in the store",
 }
 
 // tr is the copy of the current language.

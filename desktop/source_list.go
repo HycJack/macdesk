@@ -55,7 +55,7 @@ func SourceList(c *ui.Context, groups []SourceGroup, current *string) ui.Element
 					b.Background(b.AnimateColor("bg", t.Border.Alpha(0.5*unit(b.Hovered())).Mix(t.Accent.Alpha(0.16), unit(on)), ui.Snappy))
 					kit.Stagger(c, list, b, i).Children(func() {
 						ui.Row(c).FillWidth().Gap(t.Space(2)).AlignItems(ui.Center).Children(func() {
-							glyph(c, it.Icon, 16).TextColor(b.AnimateColor("mark", t.TextMuted.Mix(t.Accent, unit(on)), ui.Snappy))
+							mark(c, it.Icon, 18).TextColor(b.AnimateColor("mark", t.TextMuted.Mix(t.Accent, unit(on)), ui.Snappy))
 							ui.Text(c, it.Name).FontSize(t.Rem(0.8)).Grow(1).MinWidth(0).SingleLine()
 							if it.Count > 0 {
 								kit.Muted(c, strconv.Itoa(it.Count)).FontSize(t.Rem(0.7)).Shrink(0).ContentTransition(ui.ContentTransition{})

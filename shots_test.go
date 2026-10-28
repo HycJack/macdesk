@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/HycJack/macdesk/appicons"
 	"github.com/egoist/mygo/ui"
 )
 
@@ -32,6 +33,56 @@ func TestShootDocs(t *testing.T) {
 	d.openID("app:countdown")
 	settle(tt)
 	shoot(t, tt, "app")
+}
+
+// TestShootLight renders the light appearance for the README.
+func TestShootLight(t *testing.T) {
+	if os.Getenv("MACDESK_SHOTS") == "" {
+		t.Skip("set MACDESK_SHOTS=1 to refresh docs screenshots")
+	}
+	isolateApps(t)
+	d := newDesk()
+	d.controls.Dark = false
+	if err := d.installSample(*sampleByID("calc")); err != nil {
+		t.Fatal(err)
+	}
+	d.wins["notes"].open = false
+	d.openID("store")
+	tt := ui.NewTester(d.view, 1280, 820)
+	settle(tt)
+	shoot(t, tt, "light")
+}
+
+// TestShootIconSheet renders the icon set for the README.
+func TestShootIconSheet(t *testing.T) {
+	if os.Getenv("MACDESK_SHOTS") == "" {
+		t.Skip("set MACDESK_SHOTS=1 to refresh docs screenshots")
+	}
+	names := appicons.Names()
+	const cols, cell = 13, 56
+	rows := (len(names) + cols - 1) / cols
+	tt := ui.NewTester(func(c *ui.Context) {
+		ui.Column(c).Gap(0).Background(ui.Hex("#eceef2")).Children(func() {
+			for r := 0; r < rows; r++ {
+				ui.Row(c).Gap(0).Children(func() {
+					for i := r * cols; i < min((r+1)*cols, len(names)); i++ {
+						ui.Box(c).Size(cell, cell).Center().Children(func() {
+							ui.Image(c, appicons.Must(names[i])).Size(44, 44)
+						})
+					}
+				})
+			}
+		})
+	}, cols*cell, rows*cell)
+	tt.Frame()
+	f, err := os.Create("docs/icons.png")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+	if err := png.Encode(f, tt.Image()); err != nil {
+		t.Fatal(err)
+	}
 }
 
 // shoot writes the tester's frame to docs/name.png.

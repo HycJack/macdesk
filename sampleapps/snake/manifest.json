@@ -1,1 +1,1 @@
-{"id": "snake", "name": "贪吃蛇", "version": "1.0.0", "api": 1, "permissions": ["timer"]}
+{"id": "snake", "name": "贪吃蛇", "version": "1.0.0", "api": 1, "icon": "app-snake", "permissions": ["timer"]}

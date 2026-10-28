@@ -78,13 +78,13 @@ func (d *desk) renderNode(c *ui.Context, inst *appInstance, n *Node, depth int, 
 			txt.Bold()
 		}
 	case "button":
-		b := kit.Press(ui.ButtonBase(c).Label(n.Label).
+		b := kit.Press(ui.ButtonBase(c).Label(n.Label).Shrink(0).
 			Padding(t.Space(1.5), t.Space(2.5)).Radius(t.Radius))
 		if n.Primary {
 			b.Background(t.Accent)
 		}
 		b.Children(func() {
-			ui.Text(c, n.Label).FontSize(t.Rem(0.85)).SingleLine()
+			ui.Text(c, n.Label).FontSize(t.Rem(0.85)).SingleLine().Shrink(0)
 		})
 		if kit.Clicked(b, sound.Tap) {
 			d.sendNodeAction(inst, n.Action)
