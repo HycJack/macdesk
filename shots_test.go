@@ -68,6 +68,24 @@ func TestShootOverlays(t *testing.T) {
 	shoot(t, tt, "settings")
 }
 
+// TestShootFinder renders the Finder icon view for the README.
+func TestShootFinder(t *testing.T) {
+	if os.Getenv("MACDESK_SHOTS") == "" {
+		t.Skip("set MACDESK_SHOTS=1 to refresh docs screenshots")
+	}
+	isolateApps(t)
+	d := newDesk()
+	d.wins["notes"].open = false
+	tt := ui.NewTester(d.view, 1280, 820)
+	settle(tt)
+	d.wins["finder"].x, d.wins["finder"].y = 40, 64
+	settle(tt)
+	shoot(t, tt, "finder")
+	d.wins["finder"].zoom = true
+	settle(tt)
+	shoot(t, tt, "finder-wide")
+}
+
 // TestShootApps renders the Photos and Terminal windows for the README.
 func TestShootApps(t *testing.T) {
 	if os.Getenv("MACDESK_SHOTS") == "" {

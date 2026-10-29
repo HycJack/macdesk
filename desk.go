@@ -16,7 +16,7 @@ const (
 	winW   float32 = 1280
 	winH   float32 = 820
 	winFW  float32 = 620
-	winFH  float32 = 400
+	winFH  float32 = 460
 	aboutW float32 = 360
 	aboutH float32 = 280
 )
@@ -75,7 +75,7 @@ func newDesk() *desk {
 		apps: map[string]*appInstance{}}
 	d.controls.Dark = true
 	d.wins["finder"] = &winState{open: true, x: 96, y: 74}
-	d.wins["notes"] = &winState{open: true, x: 700, y: 336}
+	d.wins["notes"] = &winState{open: true, x: 720, y: 336}
 	d.wins["about"] = &winState{}
 	d.wins["store"] = &winState{x: 430, y: 110}
 	d.wins["settings"] = &winState{x: 320, y: 130}
@@ -108,7 +108,7 @@ func (d *desk) view(c *ui.Context) {
 		stage.Children(func() {
 			d.icons(c, p)
 			d.window(c, p, "finder", p.finderTitle, winFW, winFH, d.finderBody)
-			d.window(c, p, "notes", d.noteIn, 560, 380, d.notesBody)
+			d.window(c, p, "notes", d.noteIn, 540, 380, d.notesBody)
 			d.window(c, p, "about", p.appleAbout, aboutW, aboutH, d.aboutBody)
 			d.window(c, p, "settings", p.settings, 600, 470, d.settingsBody)
 			d.window(c, p, "trash", p.trashT, 440, 380, d.trashBody)

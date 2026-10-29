@@ -21,7 +21,7 @@ type phrases struct {
 	ccVol, ccBri, ccOn, ccOff                                      string
 	wifiTitle, wifiEmpty                                           string
 	searchPH, backL, fwdL                                          string
-	finderTitle, finderEmpty                                       string
+	finderTitle, finderEmpty, itemsFmt                             string
 	finderGroups                                                   []desktop.SourceGroup
 	finderFiles                                                    []finderFile
 	noteGroups                                                     []desktop.SourceGroup
@@ -64,6 +64,7 @@ var zh = phrases{
 	ccT:   [4]string{"Wi-Fi", "蓝牙", "专注", "深色模式"},
 	ccVol: "声音", ccBri: "显示器", ccOn: "开", ccOff: "关",
 	wifiTitle: "网络", wifiEmpty: "未找到网络", finderTitle: "项目", finderEmpty: "没有匹配的项目",
+	itemsFmt: "%d 个项目",
 	searchPH: "搜索", backL: "后退", fwdL: "前进",
 	finderGroups: []desktop.SourceGroup{
 		{Title: "个人收藏", Items: []desktop.SourceItem{
@@ -136,6 +137,7 @@ var en = phrases{
 	ccT:   [4]string{"Wi-Fi", "Bluetooth", "Focus", "Dark Mode"},
 	ccVol: "Sound", ccBri: "Display", ccOn: "On", ccOff: "Off",
 	wifiTitle: "Networks", wifiEmpty: "No networks found", finderTitle: "Projects", finderEmpty: "No matches",
+	itemsFmt: "%d items",
 	searchPH: "Search", backL: "Back", fwdL: "Forward",
 	finderGroups: []desktop.SourceGroup{
 		{Title: "Favorites", Items: []desktop.SourceItem{

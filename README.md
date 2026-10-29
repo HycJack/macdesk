@@ -13,6 +13,11 @@ rendered by MyGo's own SVG engine at any size.
 
 ![macdesk desktop](docs/desktop.png)
 
+The Finder: a sidebar of places, a search field, and an icon view that reflows from three columns to nine as the
+window grows, with the item count in its status bar:
+
+![Finder](docs/finder.png)
+
 Light appearance, same tokens and icons:
 
 ![light appearance](docs/light.png)

@@ -31,6 +31,31 @@ func TestDesktopLayout(t *testing.T) {
 	}
 }
 
+// TestFinderTilesStayInsideTheWindow keeps the icon grid from spilling out.
+func TestFinderTilesStayInsideTheWindow(t *testing.T) {
+	d, tt := newTest(t)
+	d.wins["notes"].open = false
+	d.wins["finder"].x, d.wins["finder"].y = 40, 64
+	settle(tt)
+	checkTiles := func(left, top, right, bottom float32, where string) {
+		t.Helper()
+		for _, f := range d.tr().finderFiles {
+			r, ok := tt.Find(f.Name)
+			if !ok {
+				t.Fatalf("%s: tile %q not laid out; texts %v", where, f.Name, tt.Texts())
+			}
+			if r.X < left-0.5 || r.X+r.W > right+0.5 || r.Y < top-0.5 || r.Y+r.H > bottom+0.5 {
+				t.Errorf("%s: tile %q at %+v leaves %v,%v-%v,%v", where, f.Name, r,
+					left, top, right, bottom)
+			}
+		}
+	}
+	checkTiles(40, 64, 40+winFW, 64+winFH, "windowed")
+	d.wins["finder"].zoom = true
+	settle(tt)
+	checkTiles(0, menuH, winW, winH-dockH, "zoomed")
+}
+
 func TestCloseAndReopenFinder(t *testing.T) {
 	d, tt := newTest(t)
 	if err := tt.Click("关闭"); err != nil {
